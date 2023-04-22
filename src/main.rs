@@ -9,12 +9,13 @@ fn main() {
     greeting();
     let wort = getwrd().to_lowercase();
     println!("The word is: {wort}");
-    let diffchars = diffchar(wort);
+    let diffchars = diffchar(&wort);
     println!("{} different characters", diffchars.len());
     let choosen_char = charchooser(&diffchars);
     println!("{choosen_char}");
     while guessed_w.len() < 11 {
-        draw(&guessed_r, &guessed_w, &choosen_char)
+        draw(&guessed_r, &guessed_w, &choosen_char, &wort);
+        break;
     }
 }
 fn greeting() {
@@ -43,13 +44,8 @@ fn getwrd() -> String {
         i
     }
 }
-fn diffchar(word: String) -> Vec<char> {
+fn diffchar(word: &String) -> Vec<char> {
     let word = word.trim();
-    // println!("{}", word.chars().count());
-    // if word.chars().count() == 0 {
-    //     println!("{}", "No input, please try again!".red());
-    //     getwrd();
-    // }
     let mut diffchars: Vec<char> = Vec::new();
     for c in word.chars() {
         if diffchars.len() == 0 {
@@ -73,7 +69,7 @@ fn charchooser(buchstaben: &Vec<char>) -> char {
     let mut rng = rand::thread_rng();
     buchstaben[rng.gen_range(0..buchstaben.len())]
 }
-fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char) {
+fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word: &String) {
     clearscreen::clear().expect("Error clearing the screen");
     let breite = termsize::get().map(|size| {
         size.cols
@@ -89,8 +85,32 @@ fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char) {
         Some(v) => v,
         None => panic!("Error reading terminal height"),
     };
-    for _ in 0..höhe/2 {
+    for _ in 2..höhe/2 {
         println!("");
     }
-    println!("Test");
+    for _ in 0..(breite/2 - word.chars().count() as u16) {
+        print!(" ");
+    }
+
+    for c in word.trim().chars() {
+        if c == choosen_char.to_owned() {
+            print!("{} ", choosen_char)
+        } else {
+            let mut check = false;
+            for i in guessed_r {
+                if i.to_owned() == c {
+                    print!("{} ", String::from(c).green());
+                    check = true;
+                }
+            }
+            if !check {
+                print!("_ ");
+            }
+        }
+    }
+
+    for _ in 2..höhe/2 {
+        println!("");
+    }
+    println!("Next guess?");
 }
