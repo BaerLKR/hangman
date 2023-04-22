@@ -85,7 +85,7 @@ fn margin() {
         Some(v) => v,
         None => panic!("Error reading terminal height"),
     };
-    for _ in 2..höhe/2 {
+    for _ in 0..höhe/3 {
         println!("");
     }
 }
@@ -127,6 +127,10 @@ fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word:
     for w in guessed_w {
         print!("{} ", String::from(w.to_owned()).red());
     }
+    print!("\n");
+    let len: usize = 4;
+    margin_l(&len);
+    println!("{}{}", guessed_w.len().to_string().yellow(), "/10".yellow());
     println!("");
     println!("");
     println!("");
