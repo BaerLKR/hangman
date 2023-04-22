@@ -77,15 +77,7 @@ fn charchooser(buchstaben: &Vec<char>) -> char {
     let mut rng = rand::thread_rng();
     buchstaben[rng.gen_range(0..buchstaben.len())]
 }
-fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word: &String) {
-    // clearscreen::clear().expect("Error clearing the screen");
-    let breite = termsize::get().map(|size| {
-        size.cols
-    });
-    let breite = match breite {
-        Some(v) => v,
-        None => panic!("Error reading terminal width"),
-    };
+fn margin() {
     let höhe = termsize::get().map(|size| {
         size.rows
     });
@@ -96,10 +88,23 @@ fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word:
     for _ in 2..höhe/2 {
         println!("");
     }
-    for _ in 0..(breite/2 - word.chars().count() as u16) {
+}
+fn margin_l(string: &usize) {
+    let breite = termsize::get().map(|size| {
+        size.cols
+    });
+    let breite = match breite {
+        Some(v) => v,
+        None => panic!("Error reading terminal width"),
+    };
+    for _ in 0..(breite/2 - string.to_owned() as u16) {
         print!(" ");
     }
-
+}
+fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word: &String) {
+    clearscreen::clear().expect("Error clearing the screen");
+    margin();
+    margin_l(&word.chars().count());
     for c in word.trim().chars() {
         if c == choosen_char.to_owned() {
             print!("{} ", choosen_char)
@@ -118,24 +123,20 @@ fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word:
     }
     print!("\n");
     print!("\n");
-    for _ in 0..(breite/2 - guessed_w.len() as u16) {
-        print!(" ");
-    }
+    margin_l(&guessed_w.to_owned().len());
     for w in guessed_w {
         print!("{} ", String::from(w.to_owned()).red());
     }
-    for _ in 2..höhe/2 {
-        println!("");
-    }
+    println!("");
+    println!("");
+    println!("");
 }
 fn guess(right: &mut Vec<char>, wrong: &mut Vec<char>, diffchars: &Vec<char>) {
     println!("");
-    print!("right: {:?}\n", right);
-    print!("wrong: {:?}\n", wrong);
-    print!("diff: {:?}", diffchars);
     println!("");
     println!("Next guess?");
     let i = hangman::input();
+    let i = i.to_lowercase();
     let c = i.chars().nth(0).unwrap();
     if i.trim().chars().count() > 1 {
         println!("{}", "Please don't enter more than one letter".red());
@@ -156,9 +157,6 @@ fn guess(right: &mut Vec<char>, wrong: &mut Vec<char>, diffchars: &Vec<char>) {
             wrong.push(c);
         }
     }
-    print!("right: {:?}\n", right);
-    print!("wrong: {:?}\n", wrong);
-    print!("diff: {:?}", diffchars);
 }
 enum State {
     Win,
