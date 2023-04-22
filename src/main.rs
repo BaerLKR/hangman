@@ -12,16 +12,17 @@ fn main() {
     let diffchars = diffchar(&wort);
     println!("{} different characters", diffchars.len());
     let choosen_char = charchooser(&diffchars);
+    guessed_w.push(choosen_char);
     println!("{choosen_char}");
     while guessed_w.len() < 11 {
         draw(&guessed_r, &guessed_w, &choosen_char, &wort);
-        break;
+        guess(&mut guessed_r, &mut guessed_w, &wort);
+        check_end(&guessed_r, &guessed_w, &wort);
     }
 }
 fn greeting() {
     println!("{}", "Welcome! This is a small implementation of the hangman game as a cli.".green());
     println!("{} {} {}", "Made by".green(), "Lovis".green().bold() , "for fun and published under the EUPL.".green());
-    println!("{} {}", "It is in Version".green(), "0.1.0".green().bold());
 }
 fn getwrd() -> String {
     println!("");
@@ -112,5 +113,42 @@ fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word:
     for _ in 2..höhe/2 {
         println!("");
     }
+}
+fn guess(right: &mut Vec<char>, wrong: &mut Vec<char>, word: &String) {
     println!("Next guess?");
+    let i = hangman::input();
+    if i.trim().chars().count() > 1 {
+        println!("{}", "Please don't enter more than one letter".red());
+        guess(right, wrong, word);
+    } else {
+        for c in i.trim().chars() {
+            for n in 0..right.len() {
+                if c == right[n] {
+                    println!("{}", "You have already guessed that letter!".yellow());
+                    guess(right, wrong, word);
+                } 
+            } 
+            for n in 0..wrong.len() {
+                if c == wrong[n] {
+                    println!("{}", "You have already guessed that letter!".yellow());
+                    guess(right, wrong, word);
+                }
+            }
+            for n in word.chars() {
+                if c == n {
+                    right.push(c);
+                } else {
+                    wrong.push(c);
+                }
+            }
+        }
+    }
+}
+fn check_end(right: &Vec<char>, wrong: &Vec<char>, word: &String) {
+    println!("Richtig: {}", right.len());
+    if right.len() == word.chars().count() {
+        println!("{}", "GG!".green().bold());
+    } else if wrong.len() == 11 {
+        println!("{}", "U LOST!".red().bold());
+    }
 }
