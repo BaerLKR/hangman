@@ -12,12 +12,16 @@ fn main() {
     let diffchars = diffchar(&wort);
     println!("{} different characters", diffchars.len());
     let choosen_char = charchooser(&diffchars);
-    guessed_w.push(choosen_char);
+    guessed_r.push(choosen_char);
     println!("{choosen_char}");
     while guessed_w.len() < 11 {
         draw(&guessed_r, &guessed_w, &choosen_char, &wort);
-        guess(&mut guessed_r, &mut guessed_w, &wort);
-        check_end(&guessed_r, &guessed_w, &wort);
+        match check_end(&guessed_r, &guessed_w, &diffchars) {
+            State::Cont => {},
+            State::Win => break,
+            State::Loose => break,
+        };
+        guess(&mut guessed_r, &mut guessed_w, &diffchars);
     }
 }
 fn greeting() {
@@ -109,33 +113,36 @@ fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word:
             }
         }
     }
-
+    print!("\n");
+    for w in guessed_w {
+        print!("{w} ");
+    }
     for _ in 2..höhe/2 {
         println!("");
     }
 }
-fn guess(right: &mut Vec<char>, wrong: &mut Vec<char>, word: &String) {
+fn guess(right: &mut Vec<char>, wrong: &mut Vec<char>, diffchars: &Vec<char>) {
     println!("Next guess?");
     let i = hangman::input();
     if i.trim().chars().count() > 1 {
         println!("{}", "Please don't enter more than one letter".red());
-        guess(right, wrong, word);
+        guess(right, wrong, diffchars);
     } else {
         for c in i.trim().chars() {
             for n in 0..right.len() {
                 if c == right[n] {
                     println!("{}", "You have already guessed that letter!".yellow());
-                    guess(right, wrong, word);
+                    guess(right, wrong, diffchars);
                 } 
             } 
             for n in 0..wrong.len() {
                 if c == wrong[n] {
                     println!("{}", "You have already guessed that letter!".yellow());
-                    guess(right, wrong, word);
+                    guess(right, wrong, diffchars);
                 }
             }
-            for n in word.chars() {
-                if c == n {
+            for n in diffchars {
+                if c == n.to_owned() {
                     right.push(c);
                 } else {
                     wrong.push(c);
@@ -144,11 +151,20 @@ fn guess(right: &mut Vec<char>, wrong: &mut Vec<char>, word: &String) {
         }
     }
 }
-fn check_end(right: &Vec<char>, wrong: &Vec<char>, word: &String) {
-    println!("Richtig: {}", right.len());
-    if right.len() == word.chars().count() {
+enum State {
+    Win,
+    Loose,
+    Cont,
+}
+fn check_end(right: &Vec<char>, wrong: &Vec<char>, diffchars: &Vec<char>) -> State {
+    let re = if right.len() == diffchars.len() {
         println!("{}", "GG!".green().bold());
+        State::Win
     } else if wrong.len() == 11 {
         println!("{}", "U LOST!".red().bold());
-    }
+        State::Loose
+    } else {
+        State::Cont
+    };
+    re
 }
