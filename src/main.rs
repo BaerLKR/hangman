@@ -78,7 +78,7 @@ fn charchooser(buchstaben: &Vec<char>) -> char {
     buchstaben[rng.gen_range(0..buchstaben.len())]
 }
 fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word: &String) {
-    clearscreen::clear().expect("Error clearing the screen");
+    // clearscreen::clear().expect("Error clearing the screen");
     let breite = termsize::get().map(|size| {
         size.cols
     });
@@ -136,34 +136,24 @@ fn guess(right: &mut Vec<char>, wrong: &mut Vec<char>, diffchars: &Vec<char>) {
     println!("");
     println!("Next guess?");
     let i = hangman::input();
+    let c = i.chars().nth(0).unwrap();
     if i.trim().chars().count() > 1 {
         println!("{}", "Please don't enter more than one letter".red());
         guess(right, wrong, diffchars);
+    } else if right.contains(&c) || wrong.contains(&c) {
+        println!("{}", "Already guessed that letter".yellow());
+        guess(right, wrong, diffchars);
     } else {
-        for c in i.trim().chars() {
-            for n in 0..right.len() {
-                if c == right[n] {
-                    println!("{}", "You have already guessed that letter!".yellow());
-                    guess(right, wrong, diffchars);
-                } 
-            } 
-            for n in 0..wrong.len() {
-                if c == wrong[n] {
-                    println!("{}", "You have already guessed that letter!".yellow());
-                    guess(right, wrong, diffchars);
-                }
+        let mut counter = 0;
+        for n in diffchars {
+            if c == n.to_owned() {
+                right.push(c);
+            } else {
+                counter += 1;
             }
-            let mut counter = 0;
-            for n in diffchars {
-                if c == n.to_owned() {
-                    right.push(c);
-                } else {
-                    counter += 1;
-                }
-            }
-            if counter == diffchars.len() {
-                wrong.push(c);
-            }
+        }
+        if counter == diffchars.len() {
+            wrong.push(c);
         }
     }
     print!("right: {:?}\n", right);
