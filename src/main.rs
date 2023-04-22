@@ -171,7 +171,7 @@ fn check_end(right: &Vec<char>, wrong: &Vec<char>, diffchars: &Vec<char>) -> Sta
     let re = if right.len() == diffchars.len() {
         println!("{}", "GG!".green().bold());
         State::Win
-    } else if wrong.len() == 11 {
+    } else if wrong.len() == 10 {
         println!("{}", "U LOST!".red().bold());
         State::Loose
     } else {
