@@ -14,7 +14,7 @@ fn main() {
     let choosen_char = charchooser(&diffchars);
     guessed_r.push(choosen_char);
     println!("{choosen_char}");
-    while guessed_w.len() < 11 {
+    loop {
         draw(&guessed_r, &guessed_w, &choosen_char, &wort);
         match check_end(&guessed_r, &guessed_w, &diffchars) {
             State::Cont => {},
@@ -114,8 +114,12 @@ fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word:
         }
     }
     print!("\n");
+    print!("\n");
+    for _ in 0..(breite/2 - guessed_w.len() as u16) {
+        print!(" ");
+    }
     for w in guessed_w {
-        print!("{w} ");
+        print!("{} ", String::from(w.to_owned()).red());
     }
     for _ in 2..höhe/2 {
         println!("");
@@ -141,12 +145,16 @@ fn guess(right: &mut Vec<char>, wrong: &mut Vec<char>, diffchars: &Vec<char>) {
                     guess(right, wrong, diffchars);
                 }
             }
+            let mut counter = 0;
             for n in diffchars {
                 if c == n.to_owned() {
                     right.push(c);
                 } else {
-                    wrong.push(c);
+                    counter += 1;
                 }
+            }
+            if counter == diffchars.len() {
+                wrong.push(c);
             }
         }
     }
