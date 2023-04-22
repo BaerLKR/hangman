@@ -45,8 +45,11 @@ fn getwrd() -> String {
     if i.trim().chars().count() == 0 {
         println!("{}", "No input, please try again!".red());
         getwrd().to_lowercase()
+    } else if i.trim().chars().count() == 1 {
+        println!("{}", "Word cannot contain only one letter, try again.".red());
+        getwrd().to_lowercase()
     } else {
-        i
+        i.to_lowercase()
     }
 }
 fn diffchar(word: &String) -> Vec<char> {
@@ -126,6 +129,11 @@ fn draw(guessed_r: &Vec<char>, guessed_w: &Vec<char>, choosen_char: &char, word:
     }
 }
 fn guess(right: &mut Vec<char>, wrong: &mut Vec<char>, diffchars: &Vec<char>) {
+    println!("");
+    print!("right: {:?}\n", right);
+    print!("wrong: {:?}\n", wrong);
+    print!("diff: {:?}", diffchars);
+    println!("");
     println!("Next guess?");
     let i = hangman::input();
     if i.trim().chars().count() > 1 {
@@ -158,6 +166,9 @@ fn guess(right: &mut Vec<char>, wrong: &mut Vec<char>, diffchars: &Vec<char>) {
             }
         }
     }
+    print!("right: {:?}\n", right);
+    print!("wrong: {:?}\n", wrong);
+    print!("diff: {:?}", diffchars);
 }
 enum State {
     Win,
