@@ -1,13 +1,14 @@
 use colored::*;
-
-pub mod lib;
+use rand::*;
 
 fn main() {
     greeting();
     let wort = getwrd().to_lowercase();
     println!("The word is: {wort}");
-    let diffchar = diffchar(wort);
-    println!("{:?}", diffchar);
+    let diffchars = diffchar(wort);
+    println!("{} different characters", diffchars.len());
+    let choosen_char = charchooser(&diffchars);
+    println!("{choosen_char}");
 }
 fn greeting() {
     println!("{}", "Welcome! This is a small implementation of the hangman game as a cli.".green());
@@ -17,7 +18,7 @@ fn greeting() {
 fn getwrd() -> String {
     println!("");
     println!("{}","Please enter a word.".yellow());
-    let i = lib::input();
+    let i = hangman::input();
     for c in i.trim().chars() {
         match c.is_alphabetic() {
             true => {},
@@ -49,4 +50,9 @@ fn diffchar(word: String) -> Vec<char> {
         }
     }
     diffchars
+}
+fn charchooser(buchstaben: &Vec<char>) -> char {
+    let buchstaben = buchstaben.to_owned();
+    let mut rng = rand::thread_rng();
+    buchstaben[rng.gen_range(0..buchstaben.len())]
 }
