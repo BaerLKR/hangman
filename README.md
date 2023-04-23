@@ -7,5 +7,5 @@ Copyright (c) Lovis Rentsch 2023
 ## Install
 
 ```
-git clone https://github.com/baer/hangman.git && cd hangman && cargo build --release && sudo mv target/release/hangman /usr/bin/ && cd .. && rm -rf hangman && echo "Done! <3"
+git clone https://github.com/BaerLKR/hangman.git && cd hangman && cargo build --release && sudo mv target/release/hangman /usr/bin/ && cd .. && rm -rf hangman && echo "Done! <3"
 ```
